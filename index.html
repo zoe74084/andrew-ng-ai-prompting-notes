@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full AI Prompting Course with Andrew Ng — 課程筆記</title>
+<style>
+/* ── Reset & Base ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif; background: #f7f6f3; color: #1a1a1a; font-size: 15px; line-height: 1.75; }
+
+/* ── Layout ── */
+.layout { display: flex; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 300px; min-width: 300px;
+  background: #1a1a1a; color: #e5e5e5;
+  padding: 28px 0;
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto; flex-shrink: 0;
+  display: flex; flex-direction: column;
+}
+.sidebar-header { padding: 0 22px 20px; border-bottom: 1px solid #333; margin-bottom: 12px; }
+.sidebar-header .brand { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #d97706; margin-bottom: 4px; }
+.sidebar-header h2 { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.4; }
+.sidebar-header .instructor { font-size: 11px; color: #888; margin-top: 4px; }
+
+.module-label {
+  padding: 10px 22px 4px;
+  font-size: 10px; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #555;
+}
+.nav-list { list-style: none; }
+.nav-item a {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 22px; color: #aaa; text-decoration: none;
+  font-size: 12.5px; line-height: 1.4; transition: background 0.15s, color 0.15s;
+}
+.nav-item a:hover { background: #2a2a2a; color: #fff; }
+.nav-item a.active { background: #2a2a2a; color: #f59e0b; }
+.nav-num { font-size: 11px; font-weight: 700; color: #555; min-width: 22px; margin-top: 1px; }
+.nav-item a:hover .nav-num, .nav-item a.active .nav-num { color: #d97706; }
+.nav-divider { height: 1px; background: #333; margin: 8px 0; }
+
+/* ── Sidebar Footer ── */
+.sidebar-footer {
+  padding: 14px 22px 18px;
+  border-top: 1px solid #333;
+  font-size: 11px; color: #555; line-height: 1.7; flex-shrink: 0; margin-top: auto;
+}
+.sidebar-footer a { color: #d97706; text-decoration: none; }
+.sidebar-footer a:hover { text-decoration: underline; }
+
+/* ── Main ── */
+.main { flex: 1; padding: 48px 52px; max-width: 840px; }
+
+/* ── Module Header ── */
+.module-header {
+  background: linear-gradient(135deg, #92400e 0%, #b45309 100%);
+  color: #fff; border-radius: 12px;
+  padding: 20px 28px; margin-bottom: 48px;
+  box-shadow: 0 2px 12px rgba(180,83,9,.25);
+}
+.module-header .m-label { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px; }
+.module-header h1 { font-size: 22px; font-weight: 800; line-height: 1.3; }
+.module-header .m-sub { font-size: 13px; opacity: 0.8; margin-top: 6px; }
+
+/* ── Lesson Block ── */
+.lesson { margin-bottom: 72px; padding-bottom: 72px; border-bottom: 1px solid #e5e7eb; scroll-margin-top: 32px; }
+.lesson:last-child { border-bottom: none; }
+.lesson-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #b45309; background: #fef3c7; padding: 3px 10px; border-radius: 99px; display: inline-block; margin-bottom: 12px; }
+.lesson h1 { font-size: 22px; font-weight: 800; color: #111; border-bottom: 3px solid #d97706; padding-bottom: 10px; margin-bottom: 4px; line-height: 1.3; }
+.lesson-sub { font-size: 13px; color: #999; margin-bottom: 28px; }
+
+/* ── Section Headings ── */
+h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: #b45309; margin: 26px 0 10px; display: flex; align-items: center; gap: 8px; }
+h2::before { content: ""; display: block; width: 4px; height: 14px; background: #d97706; border-radius: 2px; flex-shrink: 0; }
+h3 { font-size: 14px; font-weight: 700; color: #333; margin: 14px 0 5px; }
+p { margin-bottom: 10px; }
+
+/* ── Lists ── */
+ol, ul { padding-left: 20px; }
+li { margin-bottom: 5px; }
+li strong { color: #111; }
+
+/* ── Tables ── */
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+th { background: #fef3c7; color: #92400e; font-weight: 700; padding: 7px 11px; text-align: left; border: 1px solid #fde68a; }
+td { padding: 6px 11px; border: 1px solid #e5e7eb; vertical-align: top; }
+tr:nth-child(even) td { background: #fffbeb; }
+
+/* ── Code ── */
+pre, code { background: #f3f3ef; font-family: "SF Mono", "Fira Code", "Consolas", monospace; font-size: 13px; border-radius: 4px; }
+pre { padding: 14px 16px; overflow-x: auto; margin: 10px 0; border-left: 3px solid #d97706; line-height: 1.85; }
+code { padding: 1px 5px; }
+
+/* ── Special Boxes ── */
+.example-box { background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 6px; padding: 13px 15px; margin: 10px 0; font-size: 13.5px; }
+.example-box .label { font-size: 11px; font-weight: 700; color: #b45309; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+.tip-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #22c55e; border-radius: 6px; padding: 11px 15px; margin: 10px 0; font-size: 13.5px; }
+.tip-box .label { font-size: 11px; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.key-rule { background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; border-radius: 6px; padding: 11px 15px; margin: 14px 0; font-size: 14px; font-weight: 600; color: #92400e; }
+.warn-box { background: #fef2f2; border: 1px solid #fecaca; border-left: 4px solid #ef4444; border-radius: 6px; padding: 11px 15px; margin: 10px 0; font-size: 13.5px; }
+.warn-box .label { font-size: 11px; font-weight: 700; color: #dc2626; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.note-box { background: #f9f9f7; border: 1px solid #e5e7eb; border-left: 3px solid #9ca3af; border-radius: 4px; padding: 10px 14px; font-size: 12.5px; color: #555; margin: 10px 0 18px; line-height: 1.65; }
+.note-box strong { color: #374151; }
+.blue-box { background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #3b82f6; border-radius: 6px; padding: 11px 15px; margin: 10px 0; font-size: 13.5px; }
+.blue-box .label { font-size: 11px; font-weight: 700; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+
+/* ── Compare Grid ── */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.compare-card { border-radius: 8px; padding: 12px 14px; font-size: 13px; }
+.compare-card.bad { background: #fef2f2; border: 1px solid #fecaca; }
+.compare-card.good { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.compare-card .c-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.compare-card.bad .c-label { color: #dc2626; }
+.compare-card.good .c-label { color: #15803d; }
+.compare-card ul { padding-left: 16px; }
+.compare-card li { margin-bottom: 4px; }
+
+/* ── Quick Reference Table at End ── */
+.qr-table th { background: #1a1a1a; color: #f59e0b; border-color: #333; }
+.qr-table td { background: #fff; }
+.qr-table tr:nth-child(even) td { background: #fafaf8; }
+
+/* ── Source Footer ── */
+.source-footer { margin-top: 48px; padding: 16px 0 8px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #888; text-align: center; }
+.source-footer a { color: #d97706; text-decoration: none; }
+
+/* ── Print ── */
+@media print {
+  .sidebar { display: none; }
+  .main { padding: 20px; max-width: 100%; }
+  .lesson { page-break-after: always; }
+  body { font-size: 12px; background: #fff; }
+  h1 { font-size: 18px; }
+}
+
+/* ── Mobile ── */
+.mobile-header { display: none; align-items: center; gap: 12px; padding: 10px 16px; background: #1a1a1a; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #333; }
+.hamburger { width: 36px; height: 36px; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 4px; flex-shrink: 0; }
+.hamburger span { display: block; width: 22px; height: 2px; background: #d97706; border-radius: 2px; }
+.mobile-title { font-size: 13px; font-weight: 700; color: #fff; line-height: 1.35; }
+.mobile-title small { display: block; font-size: 10px; font-weight: 400; color: #888; margin-top: 1px; }
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 99; }
+.sidebar-overlay.visible { display: block; }
+
+@media (max-width: 768px) {
+  .mobile-header { display: flex; }
+  .layout { display: block; }
+  .sidebar { position: fixed; top: 0; left: 0; width: 280px; height: 100vh; z-index: 100; transform: translateX(-100%); transition: transform 0.3s ease; padding-top: 16px; }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.4); }
+  .main { padding: 20px 16px; max-width: 100%; }
+  table { display: block; overflow-x: auto; }
+  pre { max-width: 100%; white-space: pre-wrap; }
+  .compare-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ MOBILE HEADER ══ -->
+<div class="mobile-header">
+  <button class="hamburger" aria-label="開啟選單">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="mobile-title">AI Prompting <small>Andrew Ng 課程筆記</small></div>
+</div>
+<div class="sidebar-overlay"></div>
+
+<div class="layout">
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="brand">Course Notes</div>
+    <h2>Full AI Prompting Course</h2>
+    <div class="instructor">Andrew Ng · DeepLearning.AI</div>
+  </div>
+
+  <div class="module-label">Module 1 · AI 基礎與資訊搜尋</div>
+  <ul class="nav-list">
+    <li class="nav-item"><a href="#lesson01"><span class="nav-num">01</span>AI 新手 vs 進階用戶</a></li>
+    <li class="nav-item"><a href="#lesson02"><span class="nav-num">02</span>Pre-trained Knowledge</a></li>
+    <li class="nav-item"><a href="#lesson03"><span class="nav-num">03</span>Web Search</a></li>
+    <li class="nav-item"><a href="#lesson04"><span class="nav-num">04</span>Deep Research</a></li>
+    <li class="nav-item"><a href="#lesson05"><span class="nav-num">05</span>Context 管理</a></li>
+    <li class="nav-item"><a href="#lesson06"><span class="nav-num">06</span>Reasoning Models</a></li>
+  </ul>
+
+  <div class="nav-divider"></div>
+  <div class="module-label">Module 2 · AI 作為思考夥伴</div>
+  <ul class="nav-list">
+    <li class="nav-item"><a href="#lesson07"><span class="nav-num">07</span>Brainstorming</a></li>
+    <li class="nav-item"><a href="#lesson08"><span class="nav-num">08</span>Sycophancy</a></li>
+    <li class="nav-item"><a href="#lesson09"><span class="nav-num">09</span>Writing</a></li>
+    <li class="nav-item"><a href="#lesson10"><span class="nav-num">10</span>Critiquing &amp; Editing</a></li>
+  </ul>
+
+  <div class="nav-divider"></div>
+  <div class="module-label">Module 3 · 超越文字</div>
+  <ul class="nav-list">
+    <li class="nav-item"><a href="#lesson11"><span class="nav-num">11</span>Multimodal AI</a></li>
+    <li class="nav-item"><a href="#lesson12"><span class="nav-num">12</span>圖像理解</a></li>
+    <li class="nav-item"><a href="#lesson13"><span class="nav-num">13</span>圖像生成</a></li>
+    <li class="nav-item"><a href="#lesson14"><span class="nav-num">14</span>用 AI 建 App</a></li>
+    <li class="nav-item"><a href="#lesson15"><span class="nav-num">15</span>資料分析</a></li>
+  </ul>
+
+  <div class="nav-divider"></div>
+  <ul class="nav-list">
+    <li class="nav-item" style="margin-top:4px;"><a href="#quickref"><span class="nav-num" style="color:#0369a1;">★</span>核心技巧速查表</a></li>
+    <li class="nav-item" style="margin-top:4px;"><a href="#resources"><span class="nav-num" style="color:#0369a1;">↗</span>延伸學習資源</a></li>
+  </ul>
+
+  <div class="sidebar-footer">
+    來源：YouTube 課程逐字稿<br>
+    <a href="https://www.deeplearning.ai/" target="_blank">DeepLearning.AI</a> · 整理日期 2026-05-23
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+<!-- ════════════════ MODULE 1 ════════════════ -->
+<div class="module-header">
+  <div class="m-label">Module 1</div>
+  <h1>AI 基礎與資訊搜尋</h1>
+  <div class="m-sub">AI 的知識從哪來？如何讓它找到最正確的資訊？</div>
+</div>
+
+<!-- ═══ 01 ═══ -->
+<section class="lesson" id="lesson01">
+  <span class="lesson-tag">Lesson 01</span>
+  <h1>AI 新手 vs AI 進階用戶<br><small style="font-size:15px;font-weight:500;color:#666;">AI Novice vs AI Power User</small></h1>
+  <div class="lesson-sub">本節概念：Context · Neutral Questioning · Iterative Writing · Rubric</div>
+
+  <h2>核心心智模型</h2>
+  <div class="key-rule">把 AI 想成一個剛入職的聰明大學生：高度積極、知識廣博，但對你一無所知。你提供的 context 越好，他做的越好。</div>
+
+  <h2>五個關鍵差異</h2>
+
+  <h3>① 問題的複雜度</h3>
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <div class="c-label">❌ 新手</div>
+      <p>把 AI 當搜尋引擎，問簡單問題：<br>"Does Taco Bell still have the double deck taco?"</p>
+    </div>
+    <div class="compare-card good">
+      <div class="c-label">✅ 進階用戶</div>
+      <p>上傳大量文件（車子規格、保險方案、報價），讓 AI 花數分鐘深度分析後給出完整報告，附帶取捨比較。</p>
+    </div>
+  </div>
+
+  <h3>② 提供的 Context 多寡</h3>
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <div class="c-label">❌ 新手</div>
+      <p>給一個短 prompt，期望 AI 自己填空。<br>例："Please write a good self-review to send to my boss."</p>
+    </div>
+    <div class="compare-card good">
+      <div class="c-label">✅ 進階用戶</div>
+      <p>上傳專案追蹤截圖、最近的文件、語音備忘錄，再叫 AI 根據這些寫自我考核。AI 才能真正抓到你最自豪的成就。</p>
+    </div>
+  </div>
+
+  <h3>③ 獲得誠實的回饋</h3>
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <div class="c-label">❌ 新手（有偏誤的提問）</div>
+      <p>"我有個很棒的商業點子：流動紮染服務。幫我批評一下。"<br>→ AI 會說「真棒！」</p>
+    </div>
+    <div class="compare-card good">
+      <div class="c-label">✅ 進階用戶（使用 rubric）</div>
+      <p>提供評分標準：「用以下標準評估：有沒有市場需求？有沒有競爭優勢？」<br>→ AI 回答："8 分（滿分 100），原因如下…"</p>
+    </div>
+  </div>
+
+  <h3>④ 寫作工作流程</h3>
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <div class="c-label">❌ 新手</div>
+      <p>"幫我寫一篇關於黑莓機的部落格"<br>→ 直接得到 AI 味重、缺乏實質的文章（AI Slop）</p>
+    </div>
+    <div class="compare-card good">
+      <div class="c-label">✅ 進階用戶</div>
+      <ol>
+        <li>先要求 AI 列出大綱</li>
+        <li>反覆批評、修改大綱</li>
+        <li>大綱確定後展開成條列式重點</li>
+        <li>最後才生成完整文章</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>⑤ 對 AI 犯錯的認知</h3>
+  <div class="tip-box">
+    <div class="label">重要認知</div>
+    AI 犯錯的頻率被高估了。"草莓有幾個 R" 這類病毒式失敗案例不能代表 AI 的整體能力。現代 AI 能做：深度研究報告、個人健康數據分析、建立網站。
+  </div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>Context 越豐富，AI 的回答越精準。不要期望 AI 會猜你的意思。</li>
+    <li>提問時要中立，不要透露你期望的答案。</li>
+    <li>寫作要分階段進行，不要一次叫 AI 輸出最終成品。</li>
+    <li>提供 rubric 可以強迫 AI 給出更客觀的評估。</li>
+  </ol>
+</section>
+
+<!-- ═══ 02 ═══ -->
+<section class="lesson" id="lesson02">
+  <span class="lesson-tag">Lesson 02</span>
+  <h1>AI 的知識來源<br><small style="font-size:15px;font-weight:500;color:#666;">Pre-trained Knowledge</small></h1>
+  <div class="lesson-sub">本節概念：Pre-training · Knowledge Cutoff · Training Data Frequency</div>
+
+  <h2>AI 怎麼「學習」</h2>
+  <p>AI 從「讀」大量網路文字中學習，這些學來的知識叫 <strong>pre-trained knowledge</strong>（預訓練知識）。</p>
+
+  <table>
+    <tr><th>來源類型</th><th>範例</th></tr>
+    <tr><td>社群媒體</td><td>Reddit、Quora</td></tr>
+    <tr><td>書籍與百科</td><td>Wikipedia</td></tr>
+    <tr><td>新聞網站</td><td>各大媒體</td></tr>
+    <tr><td>學術論文</td><td>各領域研究</td></tr>
+    <tr><td colspan="2" style="text-align:center;color:#666;">合計「數兆個字」</td></tr>
+  </table>
+
+  <h2>訓練資料密度決定可靠程度</h2>
+  <table>
+    <tr><th>主題</th><th>網路資料量</th><th>AI 可靠度</th></tr>
+    <tr><td>料理、電影、名人</td><td>極多</td><td>高</td></tr>
+    <tr><td>常見事實（最高建築）</td><td>多</td><td>高</td></tr>
+    <tr><td>Quasar（天文專有名詞）</td><td>少</td><td>中等</td></tr>
+    <tr><td>你公司的內部文件</td><td>零</td><td>無法回答</td></tr>
+  </table>
+
+  <h2>語言比例的影響</h2>
+  <p>大多數訓練資料是英文。廣東話使用者超過 8,000 萬人，但廣東話網路內容可能不到 0.1%，因此 AI 對小語種的掌握相對較弱。</p>
+
+  <h2>對打字錯誤的容忍度</h2>
+  <div class="tip-box">
+    <div class="label">實用提示</div>
+    AI 能理解大量錯字（因為訓練資料本身就有錯字）。打字時不必太在意小錯誤，直接送出即可，不需要為了修正錯字而浪費時間。
+  </div>
+
+  <h2>Pre-trained Knowledge 的限制</h2>
+  <ul>
+    <li>含有誤解和過時資訊（網路上的錯誤資訊也被學進去了）</li>
+    <li>有 <strong>Knowledge Cutoff Date</strong>（訓練截止日期），之後的事情一無所知</li>
+    <li>某個日期後的事件，需要 web search 才能補充</li>
+  </ul>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>先估計「這個主題在網路上有多少資料」，就能預測 AI 的可靠度。</li>
+    <li>需要即時資訊、或問截止日期後的事，就要用 web search。</li>
+    <li>公司內部資料 AI 不會知道，必須透過 context 提供給它。</li>
+  </ol>
+</section>
+
+<!-- ═══ 03 ═══ -->
+<section class="lesson" id="lesson03">
+  <span class="lesson-tag">Lesson 03</span>
+  <h1>Web Search：即時資訊的獲取<br><small style="font-size:15px;font-weight:500;color:#666;">Web Search</small></h1>
+  <div class="lesson-sub">本節概念：Knowledge Cutoff · Web Search Trigger · Source Reliability · Two-AI Architecture</div>
+
+  <h2>什麼時候 AI 會觸發 Web Search？</h2>
+  <table>
+    <tr><th>提問情境</th><th>是否用 Web Search</th><th>原因</th></tr>
+    <tr><td>"I dropped my phone in soup. What to do?"</td><td>否</td><td>常識，不需即時資訊</td></tr>
+    <tr><td>"What's the 67 meme from 2025?"</td><td>是</td><td>截止日期後出現的事件</td></tr>
+    <tr><td>"Find me a highly rated gym near Mountain View"</td><td>是</td><td>即時性 + 地點特定</td></tr>
+    <tr><td>"What's on Voyager 1's vinyl record?"</td><td>否</td><td>歷史事實，不需更新</td></tr>
+  </table>
+
+  <h2>觸發 Web Search 的兩種方式</h2>
+  <ol>
+    <li>AI 自己判斷要不要搜</li>
+    <li>在 prompt 中明確要求：<code>"請先做 web search 再回答"</code></li>
+  </ol>
+
+  <h2>Web Search 的底層架構（Two-AI Model）</h2>
+  <div class="blue-box">
+    <div class="label">底層原理</div>
+    <p>背後有兩個 AI 模型在合作：</p>
+    <ol>
+      <li><strong>User-facing AI</strong>（你對話的那個）：負責最終回答</li>
+      <li><strong>Assistant AI</strong>：負責搜尋、過濾、摘要網頁</li>
+    </ol>
+    <p>重要：User-facing AI 只看到摘要，<strong>沒有讀完整文章</strong>。這就是為什麼 AI 有時會誤解它引用的來源。</p>
+  </div>
+
+  <h2>Web Search 的三大限制（重要！）</h2>
+
+  <h3>① 傾向引用社群媒體</h3>
+  <p>根據研究報告，AI 最常引用的來源：第一名 Reddit、第二名 Wikipedia、第三名 YouTube…。社群媒體的可靠度參差不齊。</p>
+
+  <h3>② 可能引用過時網頁</h3>
+  <div class="warn-box">
+    <div class="label">真實案例</div>
+    Andrew Ng 用 AI 找跑步地點，AI 引用了一個 20 年前的網頁，推薦的學校早已不對外開放。
+  </div>
+
+  <h3>③ 來源引用可能失真</h3>
+  <p>AI 只看到摘要，有時會聲稱某篇文章支持某結論，但實際去查原文卻完全不是那樣。</p>
+
+  <h2>如何讓 AI 使用更可靠的來源</h2>
+  <div class="example-box">
+    <div class="label">Prompt 範例</div>
+    "請只使用官方健康機構（WHO、FDA、歐洲藥品管理局）的資訊來回答這個問題，避免使用 Reddit 或 blog。"
+  </div>
+
+  <h2>Web Search vs 直接用搜尋引擎</h2>
+  <table>
+    <tr><th>需求</th><th>適合工具</th></tr>
+    <tr><td>快速找特定網站、掃瞄多個來源</td><td>搜尋引擎（Google / Bing）</td></tr>
+    <tr><td>想要多個來源的綜合結論、有取捨的判斷</td><td>AI + Web Search</td></tr>
+  </table>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>需要即時或地點特定資訊時，確保 web search 有開啟。</li>
+    <li>在 prompt 中指定信任的來源類型，AI 就會優先找更可靠的文章。</li>
+    <li>AI 引用的文章不一定真的支持它說的結論，重要決策要去驗證原文。</li>
+  </ol>
+</section>
+
+<!-- ═══ 04 ═══ -->
+<section class="lesson" id="lesson04">
+  <span class="lesson-tag">Lesson 04</span>
+  <h1>Deep Research：深度多來源研究<br><small style="font-size:15px;font-weight:500;color:#666;">Deep Research</small></h1>
+  <div class="lesson-sub">本節概念：Deep Research Mode · Research Plan · Multi-source Synthesis</div>
+
+  <h2>三種資訊獲取方式完整對比</h2>
+  <table>
+    <tr><th>方式</th><th>來源數量</th><th>回應時間</th><th>適用情境</th></tr>
+    <tr><td><strong>Pre-trained Knowledge</strong></td><td>—</td><td>秒</td><td>常識問題、不需即時資訊</td></tr>
+    <tr><td><strong>Web Search</strong></td><td>少數幾個</td><td>數秒~數十秒</td><td>即時資訊、地點特定查詢</td></tr>
+    <tr><td><strong>Deep Research</strong></td><td>數十個以上</td><td>數分鐘以上</td><td>複雜問題、需要整合多元觀點</td></tr>
+  </table>
+
+  <h2>使用 Deep Research 的正確流程</h2>
+  <ol>
+    <li><strong>給足夠的 context</strong>：例如「我在 Palo Alto，前院 30×20 英呎，預算 $500，想辦萬聖節鬼屋」</li>
+    <li>AI 會先提出 <strong>Research Plan（研究計畫）</strong></li>
+    <li>用戶審閱計畫，可以修改或補充</li>
+    <li>確認後讓 AI 執行：自動搜尋 → 讀取 → 整合 → 輸出報告</li>
+  </ol>
+
+  <div class="tip-box">
+    <div class="label">Andrew Ng 的評語</div>
+    "Deep Research 是嚴重被低估的工具，很多人有這個功能卻沒有善用它。"
+  </div>
+
+  <h2>何時選擇 Deep Research</h2>
+  <table>
+    <tr><th>問題類型</th><th>選擇</th></tr>
+    <tr><td>找一個事實（"最高建築是什麼"）</td><td>Pre-trained / Web Search</td></tr>
+    <tr><td>今天天氣怎樣</td><td>Web Search</td></tr>
+    <tr><td>"每日步數對長期健康的影響（需要看科學文獻）"</td><td>Deep Research</td></tr>
+    <tr><td>"天氣如何影響杜拜旅遊業（需要整合多個面向）"</td><td>Deep Research</td></tr>
+  </table>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>遇到「需要整合多個來源、有很多面向要考慮」的問題，主動切換 Deep Research 模式。</li>
+    <li>給 AI 的 context 越豐富，研究計畫越精準。</li>
+    <li>可以在執行前審核研究計畫，避免 AI 找錯方向。</li>
+  </ol>
+</section>
+
+<!-- ═══ 05 ═══ -->
+<section class="lesson" id="lesson05">
+  <span class="lesson-tag">Lesson 05</span>
+  <h1>Context 管理：讓 AI 更懂你的任務<br><small style="font-size:15px;font-weight:500;color:#666;">Context Management</small></h1>
+  <div class="lesson-sub">本節概念：Context Window · System Prompt · Desktop Apps · Agentic Context</div>
+
+  <h2>什麼是 Context？</h2>
+  <p><strong>Context</strong> 是 AI 用來生成回應的所有資訊，包含：</p>
+  <ul>
+    <li>System prompt（AI 的基本指示：日期、名稱、能力、工具說明）</li>
+    <li>你的 prompt</li>
+    <li>對話歷史（你和 AI 的所有來回）</li>
+    <li>你上傳的文件</li>
+  </ul>
+
+  <h2>Context 容量對比</h2>
+  <table>
+    <tr><th></th><th>容量</th></tr>
+    <tr><td>人類工作記憶</td><td>約 7 件事</td></tr>
+    <tr><td>現代 AI（2026）</td><td>約 750,000 字（≈ 前 4-5 本哈利波特）</td></tr>
+  </table>
+
+  <div class="key-rule">思考要提供什麼 context 的方法：想像一個受信任的顧問需要知道什麼，才能給你真正有幫助的回答？把那些都提供給 AI。</div>
+
+  <h2>何時要開新對話</h2>
+  <div class="warn-box">
+    <div class="label">常見錯誤</div>
+    <p>在討論自己的健身計畫到一半，突然問「幫我的媽媽設計健身計畫」。</p>
+    <p>→ 你自己的偏好和條件會汙染給媽媽的建議。<strong>開新對話可以清空 context，避免干擾。</strong></p>
+  </div>
+
+  <h2>AI Desktop Apps：代理式 Context 讀取</h2>
+  <p>工具代表：Claude Code/Cowork、Microsoft Copilot、Google Gemini</p>
+  <p>核心能力：AI 可以<strong>自己去電腦裡找相關檔案</strong>，不需要你手動上傳。你只需要說「幫我整理這個資料夾」，AI 會自己瀏覽、讀取、重新命名、移動檔案。</p>
+
+  <h3>使用 Desktop App 的安全注意事項</h3>
+  <div class="warn-box">
+    <div class="label">重要安全提醒</div>
+    <ol>
+      <li>給 AI 存取<strong>最小必要資料夾</strong>，不要讓它讀整台電腦</li>
+      <li>仔細檢查每一個「權限請求」</li>
+      <li>被刪除的檔案<strong>不會進回收桶</strong>，無法還原</li>
+      <li>被編輯的檔案通常<strong>沒有編輯歷史</strong>，無法回復</li>
+      <li>建議流程：讓 AI 先提案 → 你審核 → 確認後再執行</li>
+    </ol>
+  </div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>Context 越相關，回答越精準。不相關的 context 反而會干擾。</li>
+    <li>切換全新主題時開新對話，管理 context 的純粹度。</li>
+    <li>使用 Desktop App 時要小心授權範圍，刪了就找不回來。</li>
+  </ol>
+</section>
+
+<!-- ═══ 06 ═══ -->
+<section class="lesson" id="lesson06">
+  <span class="lesson-tag">Lesson 06</span>
+  <h1>Reasoning Models：讓 AI 深度思考<br><small style="font-size:15px;font-weight:500;color:#666;">Reasoning &amp; Thinking Models</small></h1>
+  <div class="lesson-sub">本節概念：Reasoning · Thinking Mode · Ultra Think · Agentic Loop</div>
+
+  <h2>AI 能完成任務的複雜度演進</h2>
+  <table>
+    <tr><th>時期</th><th>AI 能完成的任務難度</th></tr>
+    <tr><td>早期（2022-2023）</td><td>幾秒鐘能完成的簡單任務</td></tr>
+    <tr><td>2024-2025</td><td>幾秒到幾分鐘的任務</td></tr>
+    <tr><td>現在（2026）</td><td>人類需要數小時的任務</td></tr>
+  </table>
+
+  <h2>Reasoning 的運作邏輯（Agentic Loop）</h2>
+  <div class="example-box">
+    <div class="label">運作流程</div>
+    <p>你的 prompt → AI 開始思考 → [判斷是否需要更多資訊] → 使用工具（web search / 讀檔案）→ 繼續思考 → [重複幾次] → 輸出最終答案</p>
+  </div>
+
+  <h2>如何觸發更深度的 Reasoning</h2>
+  <table>
+    <tr><th>方法</th><th>做法</th></tr>
+    <tr><td>介面觸發</td><td>在 ChatGPT / Claude / Gemini 介面選擇「thinking mode」選項</td></tr>
+    <tr><td>Prompt 觸發</td><td>在 prompt 中說 <code>"think really hard"</code> 或 <code>"ultra think"</code></td></tr>
+  </table>
+
+  <h2>已過時的建議</h2>
+  <div class="warn-box">
+    <div class="label">舊建議（現已不適用）</div>
+    <p>"Tell the AI to think step by step"</p>
+    <p>→ 這在 2022-2023 年有效，現在的 AI 已能自行決定最佳推理方式，只需說 "think hard" 即可。</p>
+  </div>
+
+  <h2>使用 Reasoning 的最佳實踐</h2>
+  <ol>
+    <li><strong>用最新的模型</strong>：推理能力通常比 6-12 個月前的版本強非常多</li>
+    <li><strong>給足 context</strong>：把一個人類專家需要知道的所有資訊都提供給 AI</li>
+    <li><strong>給難題</strong>：不要只測試簡單問題，要嘗試真實的工作任務</li>
+    <li><strong>說 "think hard" 或選 thinking mode</strong>：讓 AI 知道你願意等它多想幾分鐘</li>
+  </ol>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>複雜任務要明確觸發 reasoning，不要省略。</li>
+    <li>Reasoning 可以花幾分鐘甚至更長，這是正常的，給它時間。</li>
+    <li>「think step by step」已過時，改用「think hard」。</li>
+  </ol>
+</section>
+
+<!-- ════════════════ MODULE 2 ════════════════ -->
+<div class="module-header" style="margin-top: 80px;">
+  <div class="m-label">Module 2</div>
+  <h1>AI 作為思考夥伴</h1>
+  <div class="m-sub">如何讓 AI 幫你思考、腦力激盪、寫作、批評？</div>
+</div>
+
+<!-- ═══ 07 ═══ -->
+<section class="lesson" id="lesson07">
+  <span class="lesson-tag">Lesson 07</span>
+  <h1>Brainstorming：腦力激盪的正確姿勢<br><small style="font-size:15px;font-weight:500;color:#666;">Brainstorming with AI</small></h1>
+  <div class="lesson-sub">本節概念：Iterative Brainstorming · Context-driven Creativity · Feedback Loop</div>
+
+  <h2>關鍵統計</h2>
+  <p>根據 OpenAI 分析 ChatGPT 對話的數據：創意發想（creative ideation）佔所有對話的 <strong>3.9%</strong>，寫作和實用指導佔約 <strong>50%</strong>。</p>
+
+  <h2>為什麼 AI 的預設回答是「常識」？</h2>
+  <p>AI 從網路學習，網路上寫「啞鈴彎舉」的文章遠比寫「貓觸發式微運動」多。所以它天生傾向給出「平均答案」——常見、通用、無趣。</p>
+
+  <div class="key-rule">要讓 AI 給出有創意的回答，必須透過「給足 Context」和「多輪迭代反饋」把它推離常識區。</div>
+
+  <h2>兩種層次的 Brainstorming</h2>
+  <table>
+    <tr><th>層次</th><th>做法</th><th>結果</th></tr>
+    <tr><td>基本</td><td>問「給我一個計畫的想法」</td><td>常識性、通用的答案（深蹲、伏地挺身）</td></tr>
+    <tr><td>進階</td><td>給足 context + 多輪迭代反饋</td><td>更有創意、更個人化（蹦床休息、貓觸發訓練）</td></tr>
+  </table>
+
+  <h2>多輪迭代腦力激盪流程（Andrew Ng 推薦）</h2>
+  <ol>
+    <li>給 AI 基本 context，要求「給我 3-5 個選項」</li>
+    <li>AI 給出選項（例：Plan A 保流動性、Plan B 先還最高利率、Plan C 先還家人借款）</li>
+    <li><strong>給反饋</strong>：「我不喜歡 A 太被動，喜歡 B 的思路，順帶一提我剛收到 450 美元現金而且快搬家了」</li>
+    <li>AI 根據反饋生成新的 3-5 個選項</li>
+    <li>重複直到找到滿意的方案，再叫 AI 展開細節</li>
+  </ol>
+
+  <div class="tip-box">
+    <div class="label">關鍵洞見</div>
+    反饋不只是挑選，它同時也是在告訴 AI「哪種 context 對你的問題更重要」。這是找出正確 context 最有效率的方式。
+  </div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>不要只叫 AI 生成一個答案，要叫它給幾個選項。</li>
+    <li>迭代給反饋，每一輪反饋都在幫 AI 更了解你的需求。</li>
+    <li>給越多個人化 context（設備、限制、偏好），越容易得到有創意的回答。</li>
+  </ol>
+</section>
+
+<!-- ═══ 08 ═══ -->
+<section class="lesson" id="lesson08">
+  <span class="lesson-tag">Lesson 08</span>
+  <h1>Sycophancy：避免 AI 只說你想聽的話<br><small style="font-size:15px;font-weight:500;color:#666;">Avoiding Sycophancy</small></h1>
+  <div class="lesson-sub">本節概念：Sycophancy · Neutral Framing · Rubric · Training Feedback Loop</div>
+
+  <h2>Sycophancy 是什麼？</h2>
+  <p><strong>Sycophancy（諂媚）</strong>：AI 被訓練成「讓用戶滿意」，所以天生傾向告訴你它認為你想聽的話，而非客觀的事實。</p>
+
+  <h2>Sycophancy 的成因（訓練循環）</h2>
+  <ol>
+    <li>用戶問：「我覺得當內向者比較好，你不也這麼認為嗎？」</li>
+    <li>AI 若回答「確實有很多優點…」→ 用戶點讚 ✅</li>
+    <li>AI 若回答「不一定，各有優缺點」→ 用戶不開心 ❌</li>
+    <li>AI 學到：「同意用戶 = 獲得正向回饋」→ 越來越傾向同意</li>
+  </ol>
+
+  <div class="warn-box">
+    <div class="label">研究數據</div>
+    根據 Washington Post 的研究，ChatGPT 同意用戶的頻率 vs 不同意的頻率 = 約 <strong>10:1</strong>。某些模型甚至說過："你剛才說的東西很深刻，你 100% 正確。"
+  </div>
+
+  <h2>如何識別 Sycophantic Prompt</h2>
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <div class="c-label">❌ 會引發諂媚的提問</div>
+      <ul>
+        <li>"Don't you think remote work is better?"（已暗示立場）</li>
+        <li>"Is it true that office work is more productive?"（已暗示立場）</li>
+        <li>"Find all the positive measures this quarter"（只找正面）</li>
+        <li>"Aren't carbon taxes bad for small businesses?"（已暗示答案）</li>
+      </ul>
+    </div>
+    <div class="compare-card good">
+      <div class="c-label">✅ 中立的提問方式</div>
+      <ul>
+        <li>"What are the pros and cons of remote vs in-office work?"</li>
+        <li>"To what extent do carbon taxes affect small businesses?"</li>
+        <li>"What does current research say about AI's effect on jobs?"</li>
+        <li>"How does productivity compare between remote and in-office work?"</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Rubric 的力量：強制客觀評估</h2>
+  <p>提供清楚的評分標準，讓 AI 無法猜到你期望的答案方向：</p>
+  <div class="example-box">
+    <div class="label">Rubric 範例（商業點子評估）</div>
+    <pre>請用以下標準評估這個商業想法（100分）：
+- 市場需求是否存在（25分）：是/否
+- 有沒有目標市場（25分）：是/否
+- 是否有競爭優勢（25分）：是/否
+- 執行可行性（25分）：是/否
+
+請逐項評分後加總，最後說明得分低的原因。</pre>
+  </div>
+
+  <div class="key-rule">好的 Rubric 每一項標準都是客觀的、是/否題，沒有灰色地帶。這樣 AI 就無法主觀判斷。</div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>中立提問是最重要的反 sycophancy 技巧：不要在問題中透露你期望的答案。</li>
+    <li>需要客觀評估時，提供 rubric 可以有效抑制 AI 的諂媚傾向。</li>
+    <li>如果不確定怎麼設計 rubric，可以先讓 AI 幫你設計，再用來評估。</li>
+  </ol>
+</section>
+
+<!-- ═══ 09 ═══ -->
+<section class="lesson" id="lesson09">
+  <span class="lesson-tag">Lesson 09</span>
+  <h1>Writing：用 AI 寫出有深度的文章<br><small style="font-size:15px;font-weight:500;color:#666;">AI Writing &amp; Progressive Outlining</small></h1>
+  <div class="lesson-sub">本節概念：AI Slop · Progressive Outlining · Iterative Drafting</div>
+
+  <h2>關鍵統計</h2>
+  <p>根據 OpenAI 的數據，<strong>寫作任務佔 ChatGPT 所有請求的 24%</strong>，是單一最大類別。</p>
+
+  <h2>什麼是 AI Slop（AI 廢文）？</h2>
+  <p>AI Slop 是看起來寫得很好、但讀起來毫無實質內容的 AI 生成文字。</p>
+  <table>
+    <tr><th>AI Slop 的特徵</th><th>說明</th></tr>
+    <tr><td>大量 em dash（—）</td><td>ChatGPT 發布後在社群媒體明顯增加</td></tr>
+    <tr><td>過度使用 "nuanced"、"delve"</td><td>AI 特有的高頻詞</td></tr>
+    <tr><td>愛用「三件事並列」</td><td>比真人更頻繁的結構模式</td></tr>
+    <tr><td>"Not X but Y" 的曖昧說法</td><td>"It's not about infrastructure, it's about architecture"</td></tr>
+    <tr><td>大量形容詞、缺少具體名詞</td><td>"robust and highly insightful"</td></tr>
+  </table>
+
+  <div class="warn-box">
+    <div class="label">社會現象</div>
+    根據調查，40% 的美國雇員在過去一個月內收到過工作 AI slop。更有趣的是，人類自己也開始在演講和 podcast 中更常用 "delve" 這個詞——AI 的語言習慣正在影響人類。
+  </div>
+
+  <h2>Progressive Outlining：避免 AI Slop 的核心方法</h2>
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <div class="c-label">❌ 錯誤做法</div>
+      <p>"Write a blog post about BlackBerry phones"</p>
+      <p>→ 直接得到 AI slop</p>
+    </div>
+    <div class="compare-card good">
+      <div class="c-label">✅ 正確流程</div>
+      <ol>
+        <li>研究：讓 AI 搜尋支持/反對論點的證據</li>
+        <li>大綱選項：叫 AI 給 3 個不同大綱</li>
+        <li>反饋大綱：修改方向、調整結構</li>
+        <li>迭代大綱：直到滿意</li>
+        <li>展開重點：先展開成條列式</li>
+        <li>最終文章：最後才生成完整文字</li>
+      </ol>
+    </div>
+  </div>
+
+  <h2>為什麼先做大綱比直接寫文章更有效率？</h2>
+  <div class="blue-box">
+    <div class="label">槓桿原理</div>
+    <p>改一個大綱的標題 → 整個對應段落都會改（高槓桿）</p>
+    <p>改文章裡的某個句子 → 只改了那一句（低槓桿）</p>
+    <p>→ 在大綱階段修改的投資報酬率遠高於在最終文章階段修改。</p>
+  </div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>不要直接叫 AI 生成最終文章，先做大綱。</li>
+    <li>大綱和重點迭代到滿意之後，再生成完整文字。</li>
+    <li>AI 是「思考夥伴」，不是「一次性輸出機器」。</li>
+  </ol>
+</section>
+
+<!-- ═══ 10 ═══ -->
+<section class="lesson" id="lesson10">
+  <span class="lesson-tag">Lesson 10</span>
+  <h1>Critiquing &amp; Editing：用 AI 精煉你的作品<br><small style="font-size:15px;font-weight:500;color:#666;">AI Editing &amp; Cross-model Review</small></h1>
+  <div class="lesson-sub">本節概念：Incremental Editing · Rubric-based Critique · Jagged Intelligence · Cross-model Review</div>
+
+  <h2>關鍵統計</h2>
+  <p>寫作任務中，<strong>約 2/3 是修改既有文章</strong>，而非從零開始創作。</p>
+
+  <h2>分段編輯（逐句或逐段）</h2>
+  <p>不要一次貼整篇文章讓 AI 改，而是一次只改一句或一段：</p>
+  <ol>
+    <li>貼上一個句子</li>
+    <li>請 AI 提供幾種改寫方式（punchy 版、visionary 版、conversational 版…）</li>
+    <li>挑選喜歡的或繼續迭代</li>
+    <li>確定後進到下一段</li>
+  </ol>
+  <p>好處：聚焦、可控、不會讓大量改動同時出現讓你看不清楚什麼改了。</p>
+
+  <h2>Rubric 評分：取得整體客觀評估</h2>
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <div class="c-label">❌ 差的 Rubric（會引發諂媚）</div>
+      <p>"請評估這篇短篇科幻故事，並給一個 100 分制的分數。"</p>
+      <p>→ AI 會先在心中決定分數，再想辦法合理化。結果幾乎都是高分。</p>
+    </div>
+    <div class="compare-card good">
+      <div class="c-label">✅ 好的 Rubric（客觀是/否標準）</div>
+      <table style="font-size:12px;margin:0;">
+        <tr><th>項目</th><th>配分</th><th>標準（是/否）</th></tr>
+        <tr><td>角色</td><td>25</td><td>每個有名字的角色都有明確目標</td></tr>
+        <tr><td>情節</td><td>25</td><td>有清楚的衝突和解決方式</td></tr>
+        <tr><td>世界建構</td><td>25</td><td>有至少 2 個獨特的世界細節</td></tr>
+        <tr><td>寫作技巧</td><td>25</td><td>段落之間有轉場句</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <div class="label">實用技巧</div>
+    不知道怎麼設計 rubric？先讓 AI 幫你設計一份，再用來評估你的作品。
+  </div>
+
+  <h2>Cross-model Review（跨模型審閱）</h2>
+  <p>讓 ChatGPT 生成內容，再讓 Gemini（或 Claude）用 rubric 評審。整合兩個模型的知識，效果略優於讓同一個模型審閱自己的輸出。</p>
+
+  <h2>AI 的「鋸齒形智能」（Jagged Intelligence）</h2>
+  <table>
+    <tr><th>AI 比人類強的地方</th><th>AI 比人類弱的地方</th></tr>
+    <tr><td>快速閱讀大量網頁</td><td>某些需要身體感知的任務</td></tr>
+    <tr><td>解複雜數學題</td><td>需要最新即時知識的任務</td></tr>
+    <tr><td>同時處理大量文件</td><td>高度創意、需要真實生命經驗的創作</td></tr>
+  </table>
+
+  <div class="tip-box">
+    <div class="label">建議習慣</div>
+    定期把同一個 prompt 丟給不同 AI（ChatGPT、Claude、Gemini），維持對各模型能力的直覺。AI 市場競爭激烈，各模型的優缺點每幾個月就會大幅改變。
+  </div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>編輯要分段進行，一次專注於一個部分。</li>
+    <li>整體評估要用客觀 rubric，避免 sycophancy 影響分數。</li>
+    <li>偶爾嘗試 cross-model review，讓不同模型互相補充。</li>
+  </ol>
+</section>
+
+<!-- ════════════════ MODULE 3 ════════════════ -->
+<div class="module-header" style="margin-top: 80px;">
+  <div class="m-label">Module 3</div>
+  <h1>超越文字的 AI 應用</h1>
+  <div class="m-sub">如何用 AI 生圖、建 App、分析資料？</div>
+</div>
+
+<!-- ═══ 11 ═══ -->
+<section class="lesson" id="lesson11">
+  <span class="lesson-tag">Lesson 11</span>
+  <h1>Multimodal AI：多模態輸入輸出<br><small style="font-size:15px;font-weight:500;color:#666;">Multimodal Inputs &amp; Outputs</small></h1>
+  <div class="lesson-sub">本節概念：Modality · Input/Output Cost · Ethics of Generative AI</div>
+
+  <h2>輸出類型成本對比</h2>
+  <table>
+    <tr><th>輸出類型</th><th>速度</th><th>成本</th><th>備註</th></tr>
+    <tr><td>文字</td><td>最快</td><td>最低</td><td>AI 的核心強項，LLM 從語言起步</td></tr>
+    <tr><td>語音</td><td>中等</td><td>中低</td><td>近年品質大幅提升，已接近真人</td></tr>
+    <tr><td>圖片</td><td>數十秒</td><td>中高</td><td>一次生成整張，不能中途停止</td></tr>
+    <tr><td>影片</td><td>最慢</td><td>最高</td><td>比圖片貴非常多</td></tr>
+  </table>
+
+  <h2>重要趨勢</h2>
+  <div class="tip-box">
+    <div class="label">成本趨勢</div>
+    生成任何格式的成本都在快速下降。一年後，生成圖片、影片的成本都會比現在更低。
+  </div>
+
+  <h2>AI 生成內容的倫理面</h2>
+  <table>
+    <tr><th>應用</th><th>有益</th><th>有害</th></tr>
+    <tr><td>語音生成</td><td>Podcast 後製修音、電動遊戲角色配音</td><td>假冒家人聲音進行詐騙</td></tr>
+    <tr><td>圖像生成</td><td>設計師原型、個人創作</td><td>深度偽造、不實形象</td></tr>
+    <tr><td>影片生成</td><td>低成本特效製作</td><td>假新聞影片</td></tr>
+  </table>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>多模態應用最重要的限制是成本和速度：圖片和影片的迭代能力遠低於文字。</li>
+    <li>之前學的 prompting 技巧（給 context、多選項）也適用於多模態，但需要更多等待時間。</li>
+    <li>有益應用遠多於有害應用，但要有意識地只用於負責任的目的。</li>
+  </ol>
+</section>
+
+<!-- ═══ 12 ═══ -->
+<section class="lesson" id="lesson12">
+  <span class="lesson-tag">Lesson 12</span>
+  <h1>圖像理解：讓 AI 看懂你的圖片<br><small style="font-size:15px;font-weight:500;color:#666;">Image Understanding</small></h1>
+  <div class="lesson-sub">本節概念：Visual Understanding · Coarse Vision · Image as Context</div>
+
+  <h2>AI 圖像理解的能力與限制</h2>
+  <table>
+    <tr><th>情境</th><th>AI 表現</th><th>原因</th></tr>
+    <tr><td>讀取白板上的字（即使被遮擋）</td><td>不錯，能推斷</td><td>能從周圍脈絡推理</td></tr>
+    <tr><td>辨識視覺上很獨特的物品</td><td>不錯</td><td>特徵明顯，即使模糊也能辨識</td></tr>
+    <tr><td>區分外觀相似的健身器材</td><td>差</td><td>各器材看起來太像，細節容易錯</td></tr>
+    <tr><td>讀取收據、帳單金額</td><td>中等</td><td>能做，但值得複查</td></tr>
+    <tr><td>辨識手寫文字</td><td>中等</td><td>能做，但值得複查</td></tr>
+  </table>
+
+  <div class="key-rule">AI 傾向「粗略地看圖」，可能錯過細節。視覺上越獨特的東西，AI 越容易正確辨識。</div>
+
+  <h2>實際應用場景</h2>
+  <ul>
+    <li>拍下白板、便利貼照片 → 要 AI 整理今天腦力激盪的討論摘要</li>
+    <li>上傳手寫文字 → 要 AI 轉錄成打字版</li>
+    <li>上傳收據 → 要 AI 計算你應該付多少</li>
+    <li>上傳圖片 → 問 AI「你會怎麼描述這張圖？」→ 學習圖像描述語言，幫助之後的圖像生成</li>
+  </ul>
+
+  <div class="tip-box">
+    <div class="label">實用技巧</div>
+    一張圖片抵過千字解釋。當你很難用文字描述你想要的東西時，直接上傳圖片讓 AI 看。
+  </div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>重要資訊（金額、數字）要複查，不能完全信任 AI 的圖像閱讀。</li>
+    <li>視覺獨特 = AI 容易識別；視覺相似 = AI 容易搞混。</li>
+    <li>可以同時上傳多張圖片（如腦力激盪的多張白板照）讓 AI 整合。</li>
+  </ol>
+</section>
+
+<!-- ═══ 13 ═══ -->
+<section class="lesson" id="lesson13">
+  <span class="lesson-tag">Lesson 13</span>
+  <h1>圖像生成：Diffusion Model 的邏輯<br><small style="font-size:15px;font-weight:500;color:#666;">Image Generation &amp; Diffusion Models</small></h1>
+  <div class="lesson-sub">本節概念：Diffusion Model · Art Vocabulary · Image Prompt Writing</div>
+
+  <h2>Diffusion Model 的運作原理</h2>
+  <div class="blue-box">
+    <div class="label">底層原理：擴散模型</div>
+    <p><strong>訓練時</strong>：AI 看大量「圖片 + 描述文字」，學習從「純噪音（隨機像素）」→ 逐步去噪 → 得到清晰圖片。</p>
+    <p><strong>生成時</strong>：你輸入 prompt，AI 從純噪音開始，逐步「去噪」，一次生成整張完整圖片（不是逐行、逐像素）。</p>
+  </div>
+
+  <h2>圖像生成的已知缺陷（早期版本）</h2>
+  <ul>
+    <li>手的外觀異常（超過或少於 5 根手指）</li>
+    <li>文字扭曲（生日快樂 → 亂碼）</li>
+    <li>同一角色在不同畫格外觀不一致</li>
+  </ul>
+  <p>現代模型（2026 年）已大幅改善，但仍非完美。</p>
+
+  <h2>如何提升圖像生成品質</h2>
+
+  <h3>① 學習圖像描述語言</h3>
+  <table>
+    <tr><th>英文詞彙</th><th>效果</th></tr>
+    <tr><td>cinematic</td><td>電影感光影</td></tr>
+    <tr><td>watercolor</td><td>水彩風格</td></tr>
+    <tr><td>cyberpunk</td><td>賽博龐克</td></tr>
+    <tr><td>anime</td><td>動漫風</td></tr>
+    <tr><td>photorealistic</td><td>真實照片感</td></tr>
+  </table>
+  <p>熟悉藝術語彙的人天生擅長圖像生成。可以上傳圖片問 AI「你會怎麼描述這張圖？」來學習正確的描述詞彙。</p>
+
+  <h3>② 讓文字 AI 幫你寫圖像 prompt</h3>
+  <div class="example-box">
+    <div class="label">流程範例</div>
+    <ol>
+      <li>告訴文字 AI（Claude/ChatGPT）："幫我寫一個圖像生成 prompt：一隻貓在夜晚偷偷經營咖啡廳"</li>
+      <li>文字 AI 會生成包含場景、角色細節、氛圍/風格的完整描述</li>
+      <li>把這個描述丟給圖像 AI（Midjourney/Stable Diffusion/Nano Banana）</li>
+    </ol>
+  </div>
+
+  <h2>圖像生成 vs 文字生成的迭代差異</h2>
+  <table>
+    <tr><th></th><th>文字生成</th><th>圖像生成</th></tr>
+    <tr><td>速度</td><td>秒</td><td>數十秒以上</td></tr>
+    <tr><td>成本</td><td>最低</td><td>中高</td></tr>
+    <tr><td>可以中途停止？</td><td>是</td><td>否（一次生成整張）</td></tr>
+    <tr><td>迭代容易度</td><td>容易大量迭代</td><td>受限，要等待</td></tr>
+  </table>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>學習視覺藝術的描述語言，是提升圖像生成品質最有效的投資。</li>
+    <li>不知道怎麼寫圖像 prompt？先讓文字 AI 幫你寫。</li>
+    <li>圖像生成的隨機性是特性不是缺點，多生幾次挑選最喜歡的。</li>
+  </ol>
+</section>
+
+<!-- ═══ 14 ═══ -->
+<section class="lesson" id="lesson14">
+  <span class="lesson-tag">Lesson 14</span>
+  <h1>用 AI 建 App：從想法到程式<br><small style="font-size:15px;font-weight:500;color:#666;">Building Apps with AI</small></h1>
+  <div class="lesson-sub">本節概念：Goal-Input-Output Framework · Simple vs Complex Apps</div>
+
+  <h2>建 App Prompt 的三要素</h2>
+  <div class="example-box">
+    <div class="label">框架：Goal → Input → Output</div>
+    <pre>目標（Goal）：我要做什麼？
+輸入（Input）：用戶要輸入什麼？
+輸出（Output）：App 要顯示什麼？
+
+範例：
+"Build a fun fireworks simulator.
+Input: user clicks on the screen.
+Output: colorful fireworks display."</pre>
+  </div>
+
+  <h2>適合新手嘗試的簡單 App（三個特徵）</h2>
+  <ol>
+    <li>有一個明確、單一的功能</li>
+    <li>不需要上傳外部檔案或串接外部 API</li>
+    <li>使用一段時間後可以關掉</li>
+  </ol>
+
+  <h2>簡單 vs 困難的判斷標準</h2>
+  <table>
+    <tr><th>簡單（適合新手）</th><th>困難（需要有開發背景）</th></tr>
+    <tr><td>單人遊戲</td><td>多人連線遊戲</td></tr>
+    <tr><td>法文單字練習（閃卡）</td><td>即時 AI 回饋的對話練習</td></tr>
+    <tr><td>番茄鐘計時器</td><td>需要串接即時 API 的工具</td></tr>
+    <tr><td>分帳計算機</td><td>有複雜狀態管理的應用</td></tr>
+    <tr><td>靜態色彩工具</td><td>跨裝置同步功能</td></tr>
+  </table>
+
+  <div class="tip-box">
+    <div class="label">建議策略</div>
+    不確定難不難？就直接試。最壞的結果是它做不好，你從失敗中學到這類任務的邊界在哪裡。
+  </div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>先用 Goal-Input-Output 框架設計 prompt，讓 AI 清楚知道要做什麼。</li>
+    <li>從最簡單的 App 開始，單一功能、無外部依賴。</li>
+    <li>可以把建好的 App 分享給朋友用，大多數工具都有分享連結功能。</li>
+  </ol>
+</section>
+
+<!-- ═══ 15 ═══ -->
+<section class="lesson" id="lesson15">
+  <span class="lesson-tag">Lesson 15</span>
+  <h1>資料分析：讓 AI 幫你寫 Code 跑分析<br><small style="font-size:15px;font-weight:500;color:#666;">Data Analysis with AI Code Execution</small></h1>
+  <div class="lesson-sub">本節概念：Code Execution Tool · Data Insights · Agentic Analysis</div>
+
+  <h2>AI 資料分析的能力</h2>
+  <p>你只需要上傳資料和說明需求，AI 會自己寫 Python 程式碼並執行，生成圖表和洞見。</p>
+
+  <table>
+    <tr><th>支援的資料類型</th><th>可以產出什麼</th></tr>
+    <tr><td>個人健康數據（心率、跑步時間）</td><td>趨勢圖、進步分析</td></tr>
+    <tr><td>銷售報表（電子表格）</td><td>銷售趨勢圖、關鍵指標</td></tr>
+    <tr><td>任何表格式數據</td><td>統計摘要、比較圖</td></tr>
+  </table>
+
+  <h2>AI Code Execution 的底層邏輯</h2>
+  <div class="example-box">
+    <div class="label">運作流程</div>
+    <p>你的 prompt + 數據文件 → AI 判斷需要計算 → AI 寫 Python 程式碼 → 呼叫「執行程式碼」工具 → 取得計算結果 → 生成圖表或文字摘要給你</p>
+  </div>
+
+  <h2>何時 AI 選擇用 Code？</h2>
+  <table>
+    <tr><th>情境</th><th>AI 的選擇</th></tr>
+    <tr><td>常識問題</td><td>使用 pre-trained knowledge</td></tr>
+    <tr><td>即時 / 地點特定資訊</td><td>使用 web search</td></tr>
+    <tr><td>複雜多面向研究</td><td>使用 deep research</td></tr>
+    <tr><td>需要計算、繪圖、草稿</td><td>寫並執行 code</td></tr>
+  </table>
+
+  <h2>實例：珍珠奶茶店銷售分析</h2>
+  <div class="example-box">
+    <div class="label">Prompt 範例</div>
+    <p>"哪些飲料的銷售變化最大？幫我畫圖。"（附上 Excel 銷售資料）</p>
+    <p>→ AI 識別出：草莓抹茶春天爆紅、椰奶茶秋天亮眼</p>
+    <p>→ 生成具有清晰顏色編碼的折線圖</p>
+    <p>進階版："Create a one-slide year-in-review graphic. Analyze the data <strong>carefully</strong> for insights."（加 "carefully" 觸發深度思考）</p>
+  </div>
+
+  <div class="warn-box">
+    <div class="label">重要提醒</div>
+    AI 用 code 算出的數字通常比純文字回答更可靠（有實際執行結果）。但仍建議：<strong>核對關鍵數字是否和你的預期吻合</strong>，避免因為資料格式問題導致計算錯誤。
+  </div>
+
+  <h2>本節重點</h2>
+  <ol>
+    <li>有表格數據要分析，就直接上傳給 AI，說明你想知道什麼，讓它寫 code 跑。</li>
+    <li>在 prompt 中加 "carefully" 可以觸發 AI 更深入的分析思考。</li>
+    <li>AI 資料分析比不上頂尖人類數據科學家，但對基礎分析非常有效率。</li>
+  </ol>
+</section>
+
+<!-- ════════════════ QUICK REF ════════════════ -->
+<section class="lesson" id="quickref">
+  <span class="lesson-tag">速查</span>
+  <h1>核心技巧速查表<br><small style="font-size:15px;font-weight:500;color:#666;">Quick Reference</small></h1>
+  <div class="lesson-sub">12 個最常用的 AI prompting 技巧一覽</div>
+
+  <table class="qr-table">
+    <tr><th>#</th><th>技巧</th><th>一句話說明</th><th>適用情境</th></tr>
+    <tr><td>1</td><td>給足 Context</td><td>想像 AI 是不認識你的顧問，把它需要的資訊全給它</td><td>所有任務</td></tr>
+    <tr><td>2</td><td>指定資料來源</td><td>要求使用官方 / 學術來源，不要只靠社群媒體</td><td>事實查詢、健康、法律</td></tr>
+    <tr><td>3</td><td>Deep Research 模式</td><td>讓 AI 花數分鐘搜尋數十個來源後給出報告</td><td>複雜研究問題</td></tr>
+    <tr><td>4</td><td>Think Hard</td><td>說 "think hard" 或選 thinking mode，讓 AI 多想幾分鐘</td><td>複雜決策、多文件分析</td></tr>
+    <tr><td>5</td><td>多輪迭代反饋</td><td>給選項 → 給反饋 → 得到新選項，重複直到滿意</td><td>Brainstorming、寫作</td></tr>
+    <tr><td>6</td><td>中立提問</td><td>不在問題中透露你期望的答案</td><td>任何需要客觀評估的場合</td></tr>
+    <tr><td>7</td><td>Rubric 評分</td><td>提供清楚、客觀、是/否的評分標準</td><td>評估作品、商業提案</td></tr>
+    <tr><td>8</td><td>Progressive Outlining</td><td>大綱 → 重點 → 文章，不要直接寫</td><td>任何長篇文章寫作</td></tr>
+    <tr><td>9</td><td>分段編輯</td><td>一次只改一句或一段，逐步精修</td><td>修改現有文章</td></tr>
+    <tr><td>10</td><td>開新對話</td><td>切換全新主題時，開新對話清空 context</td><td>避免舊 context 干擾</td></tr>
+    <tr><td>11</td><td>圖像 prompt 語言</td><td>學藝術詞彙或讓文字 AI 幫你寫 image prompt</td><td>圖像生成</td></tr>
+    <tr><td>12</td><td>定期換模型</td><td>把同一 prompt 丟給不同 AI，維持對各模型能力的直覺</td><td>長期 AI 使用習慣</td></tr>
+  </table>
+
+  <div class="source-footer">
+    整理自 <a href="https://youtu.be/8ib4Qnh2HFE" target="_blank">Full AI Prompting Course with Andrew Ng</a>（YouTube）· 2026-05-23<br>
+    <a href="handouts/andrew-ng-ai-prompting-course.md">Markdown 版本</a> ·
+    <a href="handouts/andrew-ng-ai-prompting-course.pdf">PDF 版本</a>
+  </div>
+</section>
+
+<!-- ══ RESOURCES ══ -->
+<section class="lesson" id="resources" style="border-bottom:none;">
+  <span class="lesson-tag" style="background:#e0f2fe;color:#0369a1;">延伸學習</span>
+  <h1 style="border-color:#0369a1;">Learning Resources<br><small style="font-size:15px;font-weight:500;color:#666;">課程結束後繼續深化的路徑</small></h1>
+
+  <h2>原始課程影片 Source Video</h2>
+  <div class="resource-list">
+    <li style="padding:9px 0;border-bottom:1px solid #e5e7eb;list-style:none;">
+      <a href="https://youtu.be/8ib4Qnh2HFE" target="_blank">Full AI Prompting Course with Andrew Ng</a>
+      <div class="resource-desc">本份筆記的資料來源，完整課程影片（YouTube）</div>
+    </li>
+  </div>
+
+  <h2 style="margin-top:20px;">官方認證課程 Certification Course</h2>
+  <div class="resource-list">
+    <li style="padding:9px 0;list-style:none;">
+      <a href="https://www.deeplearning.ai/courses/ai-prompting-for-everyone" target="_blank">AI Prompting for Everyone — DeepLearning.AI</a>
+      <div class="resource-desc">DeepLearning.AI 官方課程，內容與影片相同、拆分成章節，付費通過測驗可取得 DeepLearning.AI 證照</div>
+    </li>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+// Sidebar toggle (mobile)
+const hamburger = document.querySelector('.hamburger');
+const sidebar = document.querySelector('.sidebar');
+const overlay = document.querySelector('.sidebar-overlay');
+hamburger?.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('visible');
+});
+overlay?.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('visible');
+});
+
+// Active nav highlight on scroll
+const sections = document.querySelectorAll('.lesson[id], section[id]');
+const navLinks = document.querySelectorAll('.nav-item a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

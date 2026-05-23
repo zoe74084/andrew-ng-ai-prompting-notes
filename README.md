@@ -6,7 +6,7 @@
 
 | 格式 | 連結 |
 |------|------|
-| 網頁版（本機） | `output/index.html` |
+| 網頁版（GitHub Pages） | https://zoe74084.github.io/andrew-ng-ai-prompting-notes/ |
 | PDF 下載 | [handouts/andrew-ng-ai-prompting-course.pdf](handouts/andrew-ng-ai-prompting-course.pdf) |
 | Markdown 純文字 | [handouts/andrew-ng-ai-prompting-course.md](handouts/andrew-ng-ai-prompting-course.md) |
 
